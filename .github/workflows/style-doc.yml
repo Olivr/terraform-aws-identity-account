@@ -40,8 +40,14 @@ jobs:
           commit_message: Lint files
           branch: ${{ github.head_ref }}
 
-      - id: sha
-        run: echo "::set-output name=SHA::$(git rev-parse HEAD)"
+      - name: get sha
+        id: sha
+        run: |
+          sha_new=$(git rev-parse HEAD)
+          echo $sha_new
+          echo "::set-output name=SHA::$sha_new"
+      - run: 
+            echo ${{ steps.sha.outputs.SHA }}
 
   documentation:
     name: Generate documentation
