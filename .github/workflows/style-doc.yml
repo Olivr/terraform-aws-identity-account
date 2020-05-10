@@ -3,11 +3,9 @@ name: 'Style and documentation'
 on: push
 
 jobs:
-  lint:
-    name: Lint files
-    runs-on: ubuntu-latest
-    outputs: 
-      new_sha: ${{ steps.sha.outputs.SHA }}   
+  main:
+    name: Style and documentation
+    runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v1
@@ -30,32 +28,9 @@ jobs:
           args: '**/*.md'
           fix: true
           config: .markdownlint.yml
-
-      - name: Cleanup
         run: rm -rf .markdownlint.yml
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4.1.6
-        with:
-          commit_message: Lint files
-          branch: ${{ github.head_ref }}
-
-      - name: get sha
-        id: sha
-        run: echo "::set-output name=SHA::$(git rev-parse HEAD)"
-      - run: echo ${{ steps.sha.outputs.SHA }}
-      - run: echo ${{ github.head_ref }}
-
-  documentation:
-    name: Generate documentation
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ steps.sha.outputs.SHA }}
-      - run: echo ${{ github.head_ref }}
-      - uses: actions/checkout@v2
-
-      - name: About organization
+      - name: Docs - About organization
         run: |
           curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/about-org.md > .about-org-temp
           perl -p0e 's/<!-- auto-about-org -->.*<!-- auto-about-org -->\n/<!-- auto-about-org -->/s' -i README.md
@@ -78,9 +53,9 @@ jobs:
           perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md
           perl -p0e 's/<!-- auto-terraform-environment-variables -->/`cat environment-variables-temp`/ge' -i README.md
           rm -rf environment-variables-temp vars-temp
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
         with:
           commit_message: Update documentation
           branch: ${{ github.head_ref }}
-          file_pattern: README.md
