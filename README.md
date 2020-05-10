@@ -61,42 +61,7 @@ First, you need to set the environment variables.
 
 <!-- auto-terraform-environment-variables -->
 
-<!-- auto-terraform-variables -->
-
-### Input Variables
-
-| Name                                      | Description                                                                                                                                                                                             | Type                     | Default | Required |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------- | :------: |
-| namespace                                 | Namespace for naming resources (eg. `ac` for Acme)                                                                                                                                                      | `string`                 | n/a     |   yes    |
-| environment                               | Environment (eg. dev, prod, staging)                                                                                                                                                                    | `string`                 | n/a     |   yes    |
-| attributes                                | List of attributes (eg. internal, public)                                                                                                                                                               | `list(string)`           | `null`  |    no    |
-| pgp_key                                   | PGP key in plain text or using the format `keybase:username` to encrypt user keys and passwords                                                                                                         | `string`                 | `null`  |    no    |
-| aws_assume_role_arn                       | AWS role arn to assume when running this script (if any)                                                                                                                                                | `string`                 | `null`  |    no    |
-| aws_iam_roles                             | AWS roles to create. If you set the value `cognito` in `assumable_by_federated`, it will be replaced by the newly created Cognito instance, eg. `{ MyRole = { assumable_by_federated = ["cognito"] } }` | `map(map(list(string)))` | `{}`    |    no    |
-| aws_iam_groups                            | AWS groups to create. It should be specified using a map of groups and their attributes, eg. `{ MyGroup = { policies = ["arn:xxx", ...], assume_roles = ["arn:xxx", ...] }, ...}`                       | `map(map(list(string)))` | `{}`    |    no    |
-| aws_iam_users                             | AWS users to create. You can specify a simple list, eg. `["user-1", ...]` or a map of users and their groups, eg. `{ user-1 = ["MyGroup", ...], ...}`.                                                  | `any`                    | `{}`    |    no    |
-| aws_cognito_custom_domain                 | Cognito custom domain name. To use this, you must also specify `aws_cognito_custom_domain_certificate_arn`.                                                                                             | `string`                 | `null`  |    no    |
-| aws_cognito_custom_domain_certificate_arn | ARN of an issued ACM certificate for the Cognito custom domain name.                                                                                                                                    | `string`                 | `null`  |    no    |
-| aws_cognito_groups                        | n/a                                                                                                                                                                                                     | `map(map(string))`       | `{}`    |    no    |
-| aws_cognito_user_fields                   | User profile fields to add to your Cognito user pool, eg. email, birthdate, twitter                                                                                                                     | `map`                    | `{}`    |    no    |
-| aws_cognito_allowed_callback_urls         | List of URLs that Cognito clients can redirect to.                                                                                                                                                      | `list(string)`           | `[]`    |    no    |
-| aws_cognito_allowed_logout_urls           | List of URLs that Cognito clients can redirect to after logout (any url added here also need to be added in callback if making use of `redirect_uri`).                                                  | `list(string)`           | `[]`    |    no    |
-| tfe_organization                          | Terraform Cloud organization name                                                                                                                                                                       | `string`                 | `null`  |    no    |
-| tfe_workspace                             | Terraform Cloud workspace name                                                                                                                                                                          | `string`                 | `null`  |    no    |
-| auth0_domain                              | Auth0 domain                                                                                                                                                                                            | `string`                 | n/a     |   yes    |
-| auth0_cert                                | Auth0 certificate. Can be found at https://`YOUR AUTH0 DOMAIN`/pem                                                                                                                                      | `string`                 | n/a     |   yes    |
-
-### Outputs
-
-| Name                 | Description                                                                         |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| iam_roles            | n/a                                                                                 |
-| iam_users_with_roles | n/a                                                                                 |
-| cognito_domain_alias | CNAME alias to use to finalize configuration of your custom cognito domain (if any) |
-| aws_signin_url       | n/a                                                                                 |
-
-<!-- auto-terraform-variables -->
-
+<!-- tauto-terraform-variables -->
 ## How to get Auth0 API credentials
 
 1. From [your dashboard](https://manage.auth0.com/dashboard), go to APIs > Auth0 Management API > API Explorer
