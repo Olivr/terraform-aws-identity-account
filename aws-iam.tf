@@ -4,7 +4,7 @@
 
 module "iam_roles" {
   source  = "olivr-com/bulk-iam-roles/aws"
-  version = "1.0.0"
+  version = "1.0.1"
 
   roles = local.aws_iam_roles
   tags  = local.tags
