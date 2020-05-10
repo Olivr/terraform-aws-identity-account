@@ -2,8 +2,8 @@ terraform {
   required_version = "~> 0.12.24"
 
   required_providers {
-    aws = "~> 2.58"
-    //auth0 = "~> 0.9"
-    null = "~> 2.1"
+    aws   = "~> 2.58"
+    auth0 = "~> 0.9"
+    null  = "~> 2.1"
   }
 }

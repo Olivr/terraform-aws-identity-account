@@ -60,7 +60,7 @@ module "auth0_saml_provider_label" {
 
 resource "aws_iam_saml_provider" "auth0" {
   name = module.auth0_saml_provider_label.id
-  saml_metadata_document = templatefile("${path.module}/auth0-saml-metadata.xml.tpl", {
+  saml_metadata_document = templatefile("${path.module}/auth0-saml-metadata.xml.tmpl", {
     domain      = var.auth0_domain
     certificate = var.auth0_cert
     client_id   = auth0_client.aws.id
