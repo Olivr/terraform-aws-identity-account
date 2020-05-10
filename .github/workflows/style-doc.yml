@@ -12,25 +12,15 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Download linting config
+      - name: Lint - Download config
         run: |
           wget https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
 
-      - name: Terraform Format
+      - name: Lint - Terraform Format
         run: terraform fmt
 
-      - name: Terraform Linting
+      - name: Lint - Terraform
         uses: actionshub/terraform-lint@master
-
-      - name: Markdown Linting
-        uses: avto-dev/markdown-lint@v1
-        with:
-          args: '**/*.md'
-          fix: true
-          config: .markdownlint.yml
-
-      - name: Cleanup linting config
-        run: rm -rf .markdownlint.yml
 
       - name: Docs - About organization
         run: |
@@ -39,7 +29,7 @@ jobs:
           perl -p0e 's/<!-- auto-about-org -->/`cat .about-org-temp`/ge' -i README.md
           rm -rf .about-org-temp
 
-      - name: Terraform input/output
+      - name: Docs - Terraform input/output
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
           $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- auto-terraform-variables -->\n\n" }' | perl -pe 'END { print "<!-- auto-terraform-variables -->\n" }' > auto-terraform-variables-temp
@@ -47,7 +37,7 @@ jobs:
           perl -p0e 's/<!-- auto-terraform-variables -->/`cat auto-terraform-variables-temp`/ge' -i README.md
           rm -rf auto-terraform-variables-temp
 
-      - name: Terraform environment variables
+      - name: Docs - Terraform environment variables
         run: |
           curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/terraform/environment-variables.md > environment-variables-temp
           cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > vars-temp
@@ -55,6 +45,16 @@ jobs:
           perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md
           perl -p0e 's/<!-- auto-terraform-environment-variables -->/`cat environment-variables-temp`/ge' -i README.md
           rm -rf environment-variables-temp vars-temp
+      
+      - name: Lint - Markdown
+        uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          fix: true
+          config: .markdownlint.yml
+
+      - name: Lint - Cleanup
+        run: rm -rf .markdownlint.yml
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6

@@ -90,7 +90,7 @@ First, you need to set the environment variables.
 
 | Name | Description |
 |------|-------------|
-| iam\_roles | n/a |
+| iam\_rols | n/a |
 | iam\_users\_with\_roles | n/a |
 | cognito\_domain\_alias | CNAME alias to use to finalize configuration of your custom cognito domain (if any) |
 | aws\_signin\_url | n/a |
@@ -98,7 +98,6 @@ First, you need to set the environment variables.
 <!-- auto-terraform-variables -->
 
 ## How to get Auth0 API credentials
-
 1. From [your dashboard](https://manage.auth0.com/dashboard), go to APIs > Auth0 Management API > API Explorer
 
 2. Click on **Create & authorize test application**
@@ -115,6 +114,6 @@ First, you need to set the environment variables.
 
 ## About olivr
 
-[Olivr](https://olivr.com) is an AI co-founder for your startup.
+[Olivr(https://olivr.com) is an AI co-founder for your startup.
 
 <!-- auto-about-org -->
