@@ -10,10 +10,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: echo env
+        run: |
+          ls $(go env GOPATH)
+
       - name: Generate documentation for input/output variables
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
-          $GOPATH/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- terraform-docs -->\n\n" }' | perl -pe 'END { print "<!-- terraform-docs -->\n" }' > .temp-documentation
+          $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- terraform-docs -->\n\n" }' | perl -pe 'END { print "<!-- terraform-docs -->\n" }' > .temp-documentation
           perl -p0e 's/<!-- terraform-docs -->.*<!-- terraform-docs -->\n/<!-- terraform-docs -->/s' -i README.md
           perl -p0e 's/<!-- terraform-docs -->/`cat .temp-documentation`/ge' -i README.md
           rm -rf .temp-documentation
