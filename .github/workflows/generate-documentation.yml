@@ -20,7 +20,7 @@ jobs:
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
           $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- auto-terraform-variables -->\n\n" }' | perl -pe 'END { print "<!-- auto-terraform-variables -->\n" }' > auto-terraform-variables-temp
-          perl -p0e 's/<!-- auto-terraform-variables -->.*<!-- auto-terraform-variables -->\n/<!-- tauto-terraform-variables -->/s' -i README.md
+          perl -p0e 's/<!-- auto-terraform-variables -->.*<!-- auto-terraform-variables -->\n/<!-- auto-terraform-variables -->/s' -i README.md
           perl -p0e 's/<!-- auto-terraform-variables -->/`cat auto-terraform-variables-temp`/ge' -i README.md
           rm -rf auto-terraform-variables-temp
 
