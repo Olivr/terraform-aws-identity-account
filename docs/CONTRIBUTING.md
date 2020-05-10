@@ -43,7 +43,7 @@ Before coding your pulll request, please first discuss the change you wish to ma
 
 We follow the [GitHub Flow](https://guides.github.com/introduction/flow/).
 
-[![alt text](images/gitflow.png "GitHub Flow")](https://guides.github.com/pdfs/githubflow-online.pdf)
+[![alt text](https://raw.githubusercontent.com/olivr-com/defaults/master/docs/images/gitflow.png "GitHub Flow")](https://guides.github.com/pdfs/githubflow-online.pdf)
 
 Here is the process:
 
