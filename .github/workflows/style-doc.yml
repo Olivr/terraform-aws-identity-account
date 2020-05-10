@@ -24,10 +24,41 @@ jobs:
 
       - name: Docs - About organization
         run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/about-org.md > .about-org-temp
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/about-org.md > .about-org-temp
           perl -p0e 's/<!-- auto-about-org -->.*<!-- auto-about-org -->\n/<!-- auto-about-org -->/s' -i README.md
           perl -p0e 's/<!-- auto-about-org -->/`cat .about-org-temp`/ge' -i README.md
           rm -rf .about-org-temp
+
+      - name: Docs - License
+        run: |
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/LICENSE > LICENSE
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/license.md > .license-temp
+          perl -p0e 's/<!-- auto-license -->.*<!-- auto-license -->\n/<!-- auto-license -->/s' -i README.md
+          perl -p0e 's/<!-- auto-license -->/`cat .license-temp`/ge' -i README.md
+          rm -rf .license-temp
+
+      - name: Docs - Support
+        run: |
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md > .support-temp
+          perl -p0e 's/<!-- auto-support -->.*<!-- auto-support -->\n/<!-- auto-support -->/s' -i README.md
+          perl -p0e 's/<!-- auto-support -->/`cat .support-temp`/ge' -i README.md
+          rm -rf .support-temp
+
+      - name: Docs - Contributing
+        run: |
+          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CONTRIBUTING.md > docs/CONTRIBUTING.md
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/contribute.md > .contribute-temp
+          perl -p0e 's/<!-- auto-contribute -->.*<!-- auto-contribute -->\n/<!-- auto-contribute -->/s' -i README.md
+          perl -p0e 's/<!-- auto-contribute -->/`cat .contribute-temp`/ge' -i README.md
+          rm -rf .contribute-temp
+
+      - name: Docs - Code of Conduct
+        run: |
+          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CODE_OF_CONDUCT.md > docs/CODE_OF_CONDUCT.md
+
+      - name: Docs - Security
+        run: |
+          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SECURITY.md > docs/SECURITY.md
 
       - name: Docs - Terraform input/output
         run: |
@@ -39,7 +70,7 @@ jobs:
 
       - name: Docs - Terraform environment variables
         run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/terraform/environment-variables.md > environment-variables-temp
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/terraform/environment-variables.md > environment-variables-temp
           cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > vars-temp
           perl -p0e 's/<!-- env -->/`cat vars-temp`/ge' -i environment-variables-temp
           perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md

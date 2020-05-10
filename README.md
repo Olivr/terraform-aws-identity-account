@@ -111,6 +111,18 @@ First, you need to set the environment variables.
 
 > Change the name to "Terraform" so you remember what this application is about
 
+<!-- auto-support -->
+
+<!-- auto-support -->
+
+<!-- auto-contribute -->
+
+<!-- auto-contribute -->
+
+<!-- auto-license -->
+
+<!-- auto-license -->
+
 <!-- auto-about-org -->
 
 ## About olivr
