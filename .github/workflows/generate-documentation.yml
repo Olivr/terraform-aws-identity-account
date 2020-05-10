@@ -10,10 +10,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: echo env
-        run: |
-          ls $(go env GOPATH)
-
       - name: Generate documentation for input/output variables
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
