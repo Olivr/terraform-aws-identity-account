@@ -1,16 +1,16 @@
-name: 'Generate Documentation'
+name: 'Generate documentation'
 
 on: push
 
 jobs:
   terraform:
-    name: Terraform Documentation
+    name: Terraform
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Generate documentation for input/output variables
+      - name: Input/output documentation
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
           $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- terraform-docs -->\n\n" }' | perl -pe 'END { print "<!-- terraform-docs -->\n" }' > .temp-documentation
@@ -18,7 +18,7 @@ jobs:
           perl -p0e 's/<!-- terraform-docs -->/`cat .temp-documentation`/ge' -i README.md
           rm -rf .temp-documentation
 
-      - name: Generate documentation for environment variables
+      - name: Environment variables documentation
         run: |
           curl -s https://raw.githubusercontent.com/olivr-com/documentation-action/master/terraform/env.md > .temp-documentation-env.md
           cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > .temp-documentation-env-variables
