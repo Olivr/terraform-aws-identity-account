@@ -82,5 +82,5 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
         with:
           commit_message: Update documentation
-          branch: ${{ needs.lint.outputs.new_sha }}
+          branch: ${{ github.head_ref }}
           file_pattern: README.md
