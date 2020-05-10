@@ -39,6 +39,7 @@ jobs:
         with:
           args: '**/*.md'
           fix: true
+          config: .markdownlint.yml
 
       - name: Clean linting config
         run: rm -rf .markdownlint.yml

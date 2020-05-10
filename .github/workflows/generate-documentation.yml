@@ -3,8 +3,7 @@ name: 'Generate documentation'
 on: push
 
 jobs:
-  generic:
-    name: Generic
+  readme:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,21 +16,7 @@ jobs:
           perl -p0e 's/<!-- auto-about-olivr -->/`cat .about-olivr-temp`/ge' -i README.md
           rm -rf .about-olivr-temp
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4.1.6
-        with:
-          commit_message: Update documentation
-          branch: ${{ github.head_ref }}
-          file_pattern: README.md
-
-  terraform:
-    name: Terraform
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
-
-      - name: Input/output
+      - name: Terraform input/output
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
           $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- auto-terraform-variables -->\n\n" }' | perl -pe 'END { print "<!-- auto-terraform-variables -->\n" }' > auto-terraform-variables-temp
@@ -39,7 +24,7 @@ jobs:
           perl -p0e 's/<!-- auto-terraform-variables -->/`cat auto-terraform-variables-temp`/ge' -i README.md
           rm -rf auto-terraform-variables-temp
 
-      - name: Environment variables
+      - name: Terraform environment variables
         run: |
           curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/terraform/environment-variables.md > environment-variables-temp
           cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > vars-temp
