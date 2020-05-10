@@ -34,7 +34,7 @@ jobs:
       - name: Markdown Linting
         uses: avto-dev/markdown-lint@v1
         with:
-          args: '**/*.md' --fix
+          args: '**/*.md --fix'
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
