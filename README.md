@@ -61,9 +61,9 @@ First, you need to set the environment variables.
 
 <!-- auto-terraform-environment-variables -->
 
-<!-- tauto-terraform-variables -->
+<!-- auto-terraform-variables -->
 
-<!-- tauto-terraform-variables -->
+<!-- auto-terraform-variables -->
 
 ## How to get Auth0 API credentials
 
