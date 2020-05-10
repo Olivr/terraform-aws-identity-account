@@ -42,12 +42,8 @@ jobs:
 
       - name: get sha
         id: sha
-        run: |
-          sha_new=$(git rev-parse HEAD)
-          echo $sha_new
-          echo "::set-output name=SHA::$sha_new"
-      - run: 
-            echo ${{ steps.sha.outputs.SHA }}
+        run: echo "::set-output name=SHA::$(git rev-parse HEAD)"
+      - run: echo ${{ steps.sha.outputs.SHA }}
 
   documentation:
     name: Generate documentation
@@ -86,5 +82,5 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
         with:
           commit_message: Update documentation
-          branch: ${{ github.head_ref }}
+          branch: ${{ needs.lint.outputs.new_sha }}
           file_pattern: README.md
