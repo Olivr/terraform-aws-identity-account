@@ -1,6 +1,7 @@
 # GitIgnore https://github.com/github/gitignore/blob/master/Terraform.gitignore
 
 .DS_Store
+.env
 
 # Local .terraform directories
 **/.terraform/*
