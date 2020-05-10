@@ -28,6 +28,8 @@ jobs:
           args: '**/*.md'
           fix: true
           config: .markdownlint.yml
+
+      - name: Cleanup linting config
         run: rm -rf .markdownlint.yml
 
       - name: Docs - About organization
