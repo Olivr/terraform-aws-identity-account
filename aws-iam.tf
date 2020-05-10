@@ -3,12 +3,8 @@
  */
 
 module "iam_roles" {
-
-  source = "../terraform-aws-bulk-iam-roles"
-  /*
   source  = "olivr-com/bulk-iam-roles/aws"
   version = "1.0.0"
-  */
 
   roles = local.aws_iam_roles
   tags  = local.tags
