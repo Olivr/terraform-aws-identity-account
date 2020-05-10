@@ -3,6 +3,27 @@ name: 'Generate documentation'
 on: push
 
 jobs:
+  generic:
+    name: Generic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: About Olivr
+        run: |
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/about-olivr.md > .about-olivr-$GITHUB_SHA
+          perl -p0e 's/<!-- auto-about-olivr -->.*<!-- auto-about-olivr -->\n/<!-- auto-about-olivr -->/s' -i README.md
+          perl -p0e 's/<!-- auto-about-olivr -->/`cat .about-olivr-$GITHUB_SHA`/ge' -i README.md
+          rm -rf .about-olivr-$GITHUB_SHA
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4.1.6
+        with:
+          commit_message: Update documentation
+          branch: ${{ github.head_ref }}
+          file_pattern: README.md
+
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
@@ -10,22 +31,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Input/output documentation
+      - name: Input/output
         run: |
           GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
-          $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- terraform-docs -->\n\n" }' | perl -pe 'END { print "<!-- terraform-docs -->\n" }' > .temp-documentation
-          perl -p0e 's/<!-- terraform-docs -->.*<!-- terraform-docs -->\n/<!-- terraform-docs -->/s' -i README.md
-          perl -p0e 's/<!-- terraform-docs -->/`cat .temp-documentation`/ge' -i README.md
-          rm -rf .temp-documentation
+          $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- auto-terraform-variables -->\n\n" }' | perl -pe 'END { print "<!-- auto-terraform-variables -->\n" }' > auto-terraform-variables-$GITHUB_SHA
+          perl -p0e 's/<!-- auto-terraform-variables -->.*<!-- auto-terraform-variables -->\n/<!-- tauto-terraform-variables -->/s' -i README.md
+          perl -p0e 's/<!-- auto-terraform-variables -->/`cat auto-terraform-variables-$GITHUB_SHA`/ge' -i README.md
+          rm -rf auto-terraform-variables-$GITHUB_SHA
 
-      - name: Environment variables documentation
+      - name: Environment variables
         run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/documentation-action/master/terraform/env.md > .temp-documentation-env.md
-          cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > .temp-documentation-env-variables
-          perl -p0e 's/<!-- env -->/`cat .temp-documentation-env-variables`/ge' -i .temp-documentation-env.md
-          perl -p0e 's/<!-- terraform-env-docs -->.*<!-- terraform-env-docs -->\n/<!-- terraform-env-docs -->/s' -i README.md
-          perl -p0e 's/<!-- terraform-env-docs -->/`cat .temp-documentation-env.md`/ge' -i README.md
-          rm -rf .temp-documentation .temp-documentation-env.md .temp-documentation-env-variables
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/terraform/environment-variables.md > environment-variables-$GITHUB_SHA
+          cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > vars-$GITHUB_SHA
+          perl -p0e 's/<!-- env -->/`cat vars-$GITHUB_SHA`/ge' -i environment-variables-$GITHUB_SHA
+          perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md
+          perl -p0e 's/<!-- auto-terraform-environment-variables -->/`cat environment-variables-$GITHUB_SHA`/ge' -i README.md
+          rm -rf environment-variables-$GITHUB_SHA vars-$GITHUB_SHA
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6

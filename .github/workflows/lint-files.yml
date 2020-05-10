@@ -31,10 +31,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Download linting config
+        run: curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
+
       - name: Markdown Linting
         uses: avto-dev/markdown-lint@v1
         with:
-          args: '**/*.md --fix'
+          args: '**/*.md'
+          fix: true
+
+      - name: Clean linting config
+        run: rm -rf .markdownlint.yml
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
