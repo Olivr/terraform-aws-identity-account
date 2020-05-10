@@ -3,7 +3,7 @@ terraform {
 
   required_providers {
     aws   = "~> 2.58"
-    auth0 = "~> 0.9"
+    auth0 = "~> 0.9.4"
     null  = "~> 2.1"
   }
 }
