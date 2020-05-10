@@ -1,20 +1,63 @@
-name: 'Generate documentation'
+name: 'Style and documentation'
 
 on: push
 
 jobs:
-  readme:
+  lint:
+    name: Lint files
+    runs-on: ubuntu-latest
+    outputs: 
+      new_sha: ${{ steps.sha.outputs.SHA }}   
+    steps:
+      - uses: actions/checkout@master
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Download linting config
+        run: |
+          wget https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
+
+      - name: Terraform Format
+        run: terraform fmt
+
+      - name: Terraform Linting
+        uses: actionshub/terraform-lint@master
+
+      - name: Markdown Linting
+        uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          fix: true
+          config: .markdownlint.yml
+
+      - name: Cleanup
+        run: rm -rf .markdownlint.yml
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4.1.6
+        with:
+          commit_message: Lint files
+          branch: ${{ github.head_ref }}
+
+      - id: sha
+        run: echo "::set-output name=SHA::$(git rev-parse HEAD)"
+
+  documentation:
+    name: Generate documentation
+    needs: [lint]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with: 
+          ref: ${{ needs.lint.outputs.new_sha }}
 
-      - name: About Olivr
+      - name: About organization
         run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/about-olivr.md > .about-olivr-temp
-          perl -p0e 's/<!-- auto-about-olivr -->.*<!-- auto-about-olivr -->\n/<!-- auto-about-olivr -->/s' -i README.md
-          perl -p0e 's/<!-- auto-about-olivr -->/`cat .about-olivr-temp`/ge' -i README.md
-          rm -rf .about-olivr-temp
+          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/documentation/about-org.md > .about-org-temp
+          perl -p0e 's/<!-- auto-about-org -->.*<!-- auto-about-org -->\n/<!-- auto-about-org -->/s' -i README.md
+          perl -p0e 's/<!-- auto-about-org -->/`cat .about-org-temp`/ge' -i README.md
+          rm -rf .about-org-temp
 
       - name: Terraform input/output
         run: |
