@@ -98,7 +98,6 @@ First, you need to set the environment variables.
 <!-- terraform-docs -->
 
 ## How to get Auth0 API credentials
-
 1. From [your dashboard](https://manage.auth0.com/dashboard), go to APIs > Auth0 Management API > API Explorer
 
 2. Click on **Create & authorize test application**
