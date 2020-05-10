@@ -44,15 +44,16 @@ jobs:
         id: sha
         run: echo "::set-output name=SHA::$(git rev-parse HEAD)"
       - run: echo ${{ steps.sha.outputs.SHA }}
+      - run: echo ${{ github.head_ref }}
 
   documentation:
     name: Generate documentation
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ steps.sha.outputs.SHA }}
+      - run: echo ${{ github.head_ref }}
       - uses: actions/checkout@v2
-        with: 
-          ref: ${{ needs.lint.outputs.new_sha }}
 
       - name: About organization
         run: |
@@ -77,7 +78,6 @@ jobs:
           perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md
           perl -p0e 's/<!-- auto-terraform-environment-variables -->/`cat environment-variables-temp`/ge' -i README.md
           rm -rf environment-variables-temp vars-temp
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
         with:
