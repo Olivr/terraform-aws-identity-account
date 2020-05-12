@@ -20,6 +20,10 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+        env:
+          AUTH0_CLIENT_ID: x
+          AUTH0_CLIENT_SECRET: x
+          AWS_DEFAULT_REGION: us-east-1
 
       - name: Terraform Linting
         uses: actionshub/terraform-lint@master
