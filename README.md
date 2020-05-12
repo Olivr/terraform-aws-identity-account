@@ -117,21 +117,15 @@ First, you need to set the environment variables.
 
 Create a new issue on this GitHub repository.
 
-<!-- auto-support -->
-<!-- auto-contribute -->
+<!-- auto-support --><!-- auto-contribute -->
 
 ## Contributing
 
 All contributions are welcome! Please see the [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
-<!-- auto-contribute -->
-<!-- auto-license -->
-
-## License
+<!-- auto-contribute -->## License
 
 This project is licensed under the Apache 2.0 License - see the LICENSE file for details
-
-<!-- auto-license -->
 
 <!-- auto-about-org -->
 
