@@ -41,10 +41,11 @@ jobs:
           target: README.md
 
       - name: Docs - Support
-        uses: olivr-com/download-file-action@v1
+        uses: olivr-com/inject-file-action@v1
         with:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md
-
+          target: README.md
+          
       - name: Docs - Contributing
         uses: olivr-com/download-file-action@v1
         with:
