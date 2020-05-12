@@ -12,9 +12,10 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Lint - Download config
-        run: |
-          wget https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
+      - name: Lint - Download markdown config
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
 
       - name: Lint - Terraform Format
         run: terraform fmt
@@ -23,59 +24,66 @@ jobs:
         uses: actionshub/terraform-lint@master
 
       - name: Docs - About organization
-        run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/about-org.md > .about-org-temp
-          perl -p0e 's/<!-- auto-about-org -->.*<!-- auto-about-org -->\n/<!-- auto-about-org -->/s' -i README.md
-          perl -p0e 's/<!-- auto-about-org -->/`cat .about-org-temp`/ge' -i README.md
-          rm -rf .about-org-temp
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/about-org.md
+          target: README.md
 
       - name: Docs - License
-        run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/LICENSE > LICENSE
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/license.md > .license-temp
-          perl -p0e 's/<!-- auto-license -->.*<!-- auto-license -->\n/<!-- auto-license -->/s' -i README.md
-          perl -p0e 's/<!-- auto-license -->/`cat .license-temp`/ge' -i README.md
-          rm -rf .license-temp
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/LICENSE
+
+      - name: Docs - License in Readme
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/license.md
+          target: README.md
 
       - name: Docs - Support
-        run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md > .support-temp
-          perl -p0e 's/<!-- auto-support -->.*<!-- auto-support -->\n/<!-- auto-support -->/s' -i README.md
-          perl -p0e 's/<!-- auto-support -->/`cat .support-temp`/ge' -i README.md
-          rm -rf .support-temp
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md
 
       - name: Docs - Contributing
-        run: |
-          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CONTRIBUTING.md > docs/CONTRIBUTING.md
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/contribute.md > .contribute-temp
-          perl -p0e 's/<!-- auto-contribute -->.*<!-- auto-contribute -->\n/<!-- auto-contribute -->/s' -i README.md
-          perl -p0e 's/<!-- auto-contribute -->/`cat .contribute-temp`/ge' -i README.md
-          rm -rf .contribute-temp
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CONTRIBUTING.md
+
+      - name: Docs - Contributing in Readme
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/contribute.md
+          target: README.md
 
       - name: Docs - Code of Conduct
-        run: |
-          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CODE_OF_CONDUCT.md > docs/CODE_OF_CONDUCT.md
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CODE_OF_CONDUCT.md
+          path: docs
 
       - name: Docs - Security
-        run: |
-          mkdir -p docs && curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SECURITY.md > docs/SECURITY.md
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SECURITY.md
+          path: docs
+
+      - name: Install Terraform docs
+        run: GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
 
       - name: Docs - Terraform input/output
-        run: |
-          GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
-          $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/' | perl -pe 'BEGIN { print "<!-- auto-terraform-variables -->\n\n" }' | perl -pe 'END { print "<!-- auto-terraform-variables -->\n" }' > auto-terraform-variables-temp
-          perl -p0e 's/<!-- auto-terraform-variables -->.*<!-- auto-terraform-variables -->\n/<!-- auto-terraform-variables -->/s' -i README.md
-          perl -p0e 's/<!-- auto-terraform-variables -->/`cat auto-terraform-variables-temp`/ge' -i README.md
-          rm -rf auto-terraform-variables-temp
+        uses: olivr-com/inject-command-action@v1
+        with:
+          command: $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/'
+          target: README.md
+          pattern: <!-- auto-terraform-variables -->
 
       - name: Docs - Terraform environment variables
-        run: |
-          curl -s https://raw.githubusercontent.com/olivr-com/defaults/master/readme/terraform/environment-variables.md > environment-variables-temp
-          cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg' > vars-temp
-          perl -p0e 's/<!-- env -->/`cat vars-temp`/ge' -i environment-variables-temp
-          perl -p0e 's/<!-- auto-terraform-environment-variables -->.*<!-- auto-terraform-environment-variables -->\n/<!-- auto-terraform-environment-variables -->/s' -i README.md
-          perl -p0e 's/<!-- auto-terraform-environment-variables -->/`cat environment-variables-temp`/ge' -i README.md
-          rm -rf environment-variables-temp vars-temp
+        uses: olivr-com/inject-command-action@v1
+        with:
+          command: cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg'
+          target: README.md
+          pattern: <!-- auto-terraform-environment-variables -->
       
       - name: Lint - Markdown
         uses: avto-dev/markdown-lint@v1

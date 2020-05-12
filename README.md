@@ -30,13 +30,13 @@ An "identity" AWS account setup using Cognito as an identity provider in AWS IAM
 
 ## Variables
 
-<!-- auto-terraform-environment-variables -->
-
 ### Environment variables
 
 First, you need to set the environment variables.
 
 > If you want, you can [use an .env file](#using-an-env-file)
+
+<!-- auto-terraform-environment-variables -->
 
 #### AWS
 
@@ -51,6 +51,8 @@ First, you need to set the environment variables.
 - `AUTH0_CLIENT_ID`
 - `AUTH0_CLIENT_SECRET`
 
+<!-- auto-terraform-environment-variables -->
+
 #### Using an .env file
 
 1. Copy the example env file `cp .env-example .env && chmod +x .env`
@@ -59,7 +61,6 @@ First, you need to set the environment variables.
 
 3. Load the environment variables `. ./.env`
 
-<!-- auto-terraform-environment-variables -->
 
 <!-- auto-terraform-variables -->
 
@@ -117,15 +118,19 @@ First, you need to set the environment variables.
 
 Create a new issue on this GitHub repository.
 
-<!-- auto-support --><!-- auto-contribute -->
+<!-- auto-support -->
+
+<!-- auto-contribute -->
 
 ## Contributing
 
 All contributions are welcome! Please see the [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
-<!-- auto-contribute -->## License
+<!-- auto-contribute -->
 
-This project is licensed under the Apache 2.0 License - see the LICENSE file for details
+<!-- auto-license -->
+
+<!-- auto-license -->
 
 <!-- auto-about-org -->
 
