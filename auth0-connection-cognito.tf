@@ -11,7 +11,7 @@ resource "auth0_connection" "cognito" {
   options {
     client_id              = aws_cognito_user_pool_client.auth0.id
     client_secret          = aws_cognito_user_pool_client.auth0.client_secret
-    scope                  = "openid profile email"
+    scopes                 = ["openid", "profile", "email"]
     type                   = "back_channel"
     issuer                 = "https://${aws_cognito_user_pool.users.endpoint}"
     jwks_uri               = "https://${aws_cognito_user_pool.users.endpoint}/.well-known/jwks.json"
