@@ -15,6 +15,7 @@ An "identity" AWS account setup using Cognito as an identity provider in AWS IAM
 
 This setup costs **\$0** per month as it falls in the AWS and Auth0 free-tiers.
 
+
 ## Pre-requisites
 
 - [ ] [Terraform CLI](https://learn.hashicorp.com/terraform/getting-started/install.html)
