@@ -33,11 +33,11 @@ jobs:
         id: plan
         run: terraform plan -no-color
 
-      # Comment with plan result if on pull request
+      # Comment with plan result if on pull request and plan failed
       - uses: actions/github-script@0.9.0
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.plan.outputs.stderr != ''
         env:
-          STDOUT: '```${{ steps.plan.outputs.stdout }}```'
+          STDERR: '```${{ steps.plan.outputs.stderr }}```'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -45,7 +45,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: process.env.STDOUT
+              body: process.env.STDERR
             })
 
       # Apply only on master
