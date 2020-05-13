@@ -3,7 +3,8 @@
  */
 
 output "iam_roles" {
-  value = module.iam_roles.roles
+  value       = module.iam_roles.roles
+  description = "List of IAM roles that were created"
 }
 
 output "iam_users_with_roles" {
@@ -14,6 +15,7 @@ output "iam_users_with_roles" {
       ])
     })
   }
+  description = "List of IAM users that were created along with their roles and encrypted access key secrets"
 }
 
 
@@ -32,5 +34,6 @@ output "cognito_domain_alias" {
  */
 
 output "aws_signin_url" {
-  value = "https://${var.auth0_domain}/samlp/${auth0_client.aws.id}?connection=${module.cognito_users_label.id}&RelayState=https://console.aws.amazon.com/console/home?region=${local.aws_default_region}"
+  value       = "https://${var.auth0_domain}/samlp/${auth0_client.aws.id}?connection=${module.cognito_users_label.id}&RelayState=https://console.aws.amazon.com/console/home?region=${local.aws_default_region}"
+  description = "URL your Cognito users should use to signin to the AWS Console"
 }
