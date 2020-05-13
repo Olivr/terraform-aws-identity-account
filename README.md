@@ -101,28 +101,28 @@ You can also set/overwrite the values in these files in your Terraform Cloud wor
 | attributes | List of attributes (eg. internal, public) | `list(string)` | `null` | no |
 | pgp\_key | PGP key in plain text or using the format `keybase:username` to encrypt user keys and passwords | `string` | `null` | no |
 | aws\_assume\_role\_arn | AWS role arn to assume when running this script (if any) | `string` | `null` | no |
-| aws\_iam\_roles | AWS roles to create. If you set the value `cognito` in `assumable_by_federated`, it will be replaced by the newly created Cognito instance, eg. `{ MyRole = { assumable_by_federated = ["cognito"] } }` | `map(map(list(string)))` | `{}` | no |
-| aws\_iam\_groups | AWS groups to create. It should be specified using a map of groups and their attributes, eg. `{ MyGroup = { policies = ["arn:xxx", ...], assume_roles = ["arn:xxx", ...] }, ...}` | `map(map(list(string)))` | `{}` | no |
-| aws\_iam\_users | AWS users to create. You can specify a simple list, eg. `["user-1", ...]` or a map of users and their groups, eg. `{ user-1 = ["MyGroup", ...], ...}`. | `any` | `{}` | no |
+| aws\_iam\_roles | AWS roles to create. If you set the value `cognito` in `assumable_by_federated`, it will be replaced by the newly created Cognito instance, eg. `{ MyRole = { assumable_by_federated = ["cognito"] } }`. See [\_var\_aws\_iam\_roles.auto.tfvars.json](\_var\_aws\_iam\_roles.auto.tfvars.json) for the format. | `map(map(list(string)))` | `{}` | no |
+| aws\_iam\_groups | AWS groups to create. It should be specified using a map of groups and their attributes. See [\_var\_aws\_iam\_groups.auto.tfvars.json](\_var\_aws\_iam\_groups.auto.tfvars.json) for the format. | `map(map(list(string)))` | `{}` | no |
+| aws\_iam\_users | AWS users to create. You can specify a simple list, eg. `["user-1", ...]` or a map of users and their groups. See [\_var\_aws\_iam\_users.auto.tfvars.json](\_var\_aws\_iam\_users.auto.tfvars.json) for the format. | `any` | `{}` | no |
 | aws\_cognito\_custom\_domain | Cognito custom domain name. To use this, you must also specify `aws_cognito_custom_domain_certificate_arn`. | `string` | `null` | no |
 | aws\_cognito\_custom\_domain\_certificate\_arn | ARN of an issued ACM certificate for the Cognito custom domain name. | `string` | `null` | no |
-| aws\_cognito\_groups | n/a | `map(map(string))` | `{}` | no |
-| aws\_cognito\_user\_fields | User profile fields to add to your Cognito user pool, eg. email, birthdate, twitter | `map` | `{}` | no |
+| aws\_cognito\_groups | Cognito groups to create. See [\_var\_aws\_cognito\_groups.auto.tfvars.json](\_var\_aws\_cognito\_groups.auto.tfvars.json) for the format. | `map(map(string))` | `{}` | no |
+| aws\_cognito\_user\_fields | User profile fields to add to your Cognito user pool, eg. email, birthdate, twitter. See [\_var\_aws\_cognito\_user\_fields.auto.tfvars.json](\_var\_aws\_cognito\_user\_fields.auto.tfvars.json) for the format. | `map` | `{}` | no |
 | aws\_cognito\_allowed\_callback\_urls | List of URLs that Cognito clients can redirect to. | `list(string)` | `[]` | no |
 | aws\_cognito\_allowed\_logout\_urls | List of URLs that Cognito clients can redirect to after logout (any url added here also need to be added in callback if making use of `redirect_uri`). | `list(string)` | `[]` | no |
-| tfe\_organization | Terraform Cloud organization name | `string` | `null` | no |
-| tfe\_workspace | Terraform Cloud workspace name | `string` | `null` | no |
-| auth0\_domain | Auth0 domain | `string` | n/a | yes |
-| auth0\_cert | Auth0 certificate. Can be found at <https://>`YOUR AUTH0 DOMAIN`/pem | `string` | n/a | yes |
+| tfe\_organization | Terraform Cloud organization name. | `string` | `null` | no |
+| tfe\_workspace | Terraform Cloud workspace name. | `string` | `null` | no |
+| auth0\_domain | Auth0 domain. | `string` | n/a | yes |
+| auth0\_cert | Auth0 certificate. Can be found at `https://YOUR-AUTH0-DOMAIN/pem`. | `string` | n/a | yes |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| iam\_roles | n/a |
-| iam\_users\_with\_roles | n/a |
+| iam\_roles | List of IAM roles that were created |
+| iam\_users\_with\_roles | List of IAM users that were created along with their roles and encrypted access key secrets |
 | cognito\_domain\_alias | CNAME alias to use to finalize configuration of your custom cognito domain (if any) |
-| aws\_signin\_url | n/a |
+| aws\_signin\_url | URL your Cognito users should use to signin to the AWS Console |
 
 <!-- auto-terraform-variables -->
 
