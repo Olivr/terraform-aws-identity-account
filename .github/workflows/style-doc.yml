@@ -5,96 +5,123 @@ on: push
 jobs:
   main:
     name: Style and documentation
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_wrapper: false
 
-      - name: Lint - Download markdown config
+      ##################################################################
+      ## Download generic organization-wide files and Readme sections ##
+      ##################################################################
+
+      - name: Config - Markdown linting
         uses: olivr-com/download-file-action@v1
         with:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/linters/markdown/.markdownlint.yml
 
-      - name: Lint - Terraform Format
-        run: terraform fmt
-
-      - name: Lint - Terraform
-        uses: actionshub/terraform-lint@master
-
-      - name: Docs - About organization
-        uses: olivr-com/inject-file-action@v1
-        with:
-          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/about-org.md
-          target: README.md
-
-      - name: Docs - License
-        uses: olivr-com/download-file-action@v1
-        with:
-          url: https://raw.githubusercontent.com/olivr-com/defaults/master/LICENSE
-
-      - name: Docs - License in Readme
-        uses: olivr-com/inject-file-action@v1
-        with:
-          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/license.md
-          target: README.md
-
-      - name: Docs - Support
-        uses: olivr-com/inject-file-action@v1
-        with:
-          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md
-          target: README.md
-          
-      - name: Docs - Contributing
+      - name: docs/CONTRIBUTING.md
         uses: olivr-com/download-file-action@v1
         with:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CONTRIBUTING.md
+          path: docs
 
-      - name: Docs - Contributing in Readme
-        uses: olivr-com/inject-file-action@v1
-        with:
-          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/contribute.md
-          target: README.md
-
-      - name: Docs - Code of Conduct
+      - name: docs/CODE_OF_CONDUCT.md
         uses: olivr-com/download-file-action@v1
         with:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/CODE_OF_CONDUCT.md
           path: docs
 
-      - name: Docs - Security
+      - name: docs/SECURITY.md
         uses: olivr-com/download-file-action@v1
         with:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SECURITY.md
           path: docs
 
-      - name: Install Terraform docs
-        run: GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
+      - name: LICENSE
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/LICENSE
 
-      - name: Docs - Terraform input/output
+      - name: README.md - Environment variables
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/environment-variables.md
+          target: README.md
+
+      - name: README.md - Support
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/support.md
+          target: README.md
+
+      - name: README.md - Contributing
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/contribute.md
+          target: README.md
+
+      - name: README.md - License
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/license.md
+          target: README.md
+
+      - name: README.md - About organization
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/about-org.md
+          target: README.md
+
+      ########################################
+      ## Terraform specific readme sections ##
+      ########################################
+
+      - name: README.md - Terraform backend
+        uses: olivr-com/inject-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/readme/terraform/backend.md
+          target: README.md
+          pattern: <!-- auto-terraform-backend -->
+
+      - run: GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
+      - name: README.md - Variables
         uses: olivr-com/inject-command-action@v1
         with:
           command: $(go env GOPATH)/bin/terraform-docs md ./ --no-header --no-requirements --no-providers --sort-by-required --no-sort | sed -e 's/## Inputs/### Input Variables/' | sed -e 's/## Outputs/### Outputs/'
           target: README.md
           pattern: <!-- auto-terraform-variables -->
 
-      - name: Docs - Terraform environment variables
+      - name: README.md - Terraform environment variables
         uses: olivr-com/inject-command-action@v1
         with:
           command: cat .env.example | perl -p0e 's/export (\w+)=.*/- `$1`/mg' | perl -ne 'print unless /^\#\!\/bin\/bash$/' | perl -p0e 's/^\#\s(.*)$/\#\#\#\# $1\n/mg' | perl -p0e 's/^\#\#\s(.*)$/$1\n/mg'
           target: README.md
-          pattern: <!-- auto-terraform-environment-variables -->
-      
-      - name: Lint - Markdown
+          pattern: <!-- auto-terraform-env -->
+
+      ################
+      ## Lint files ##
+      ################
+
+      - name: Markdown Lint
         uses: avto-dev/markdown-lint@v1
         with:
           args: '**/*.md'
           fix: true
           config: .markdownlint.yml
+      - run: rm -rf .markdownlint.yml
 
-      - name: Lint - Cleanup
-        run: rm -rf .markdownlint.yml
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Format
+        run: terraform fmt
+
+      - name: Terraform Lint
+        uses: actionshub/terraform-lint@master
+
+      ##########################
+      ## Commit changed files ##
+      ##########################
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.6
