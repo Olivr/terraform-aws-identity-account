@@ -14,7 +14,8 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - run: terraform init
+      - name: Initialize Terraform
+        run: terraform init
 
       - name: Validate Terraform config
         run: terraform validate

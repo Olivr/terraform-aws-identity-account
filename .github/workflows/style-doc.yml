@@ -82,7 +82,9 @@ jobs:
           target: README.md
           pattern: <!-- auto-terraform-backend -->
 
-      - run: GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
+      - name: Install terraform-docs
+        run: GO111MODULE="on" go get github.com/segmentio/terraform-docs@v0.9.1
+
       - name: README.md - Variables
         uses: olivr-com/inject-command-action@v1
         with:
@@ -107,7 +109,9 @@ jobs:
           args: '**/*.md'
           fix: true
           config: .markdownlint.yml
-      - run: rm -rf .markdownlint.yml
+
+      - name: Cleanup Markdown config
+        run: rm -rf .markdownlint.yml
 
       - uses: hashicorp/setup-terraform@v1
         with:
