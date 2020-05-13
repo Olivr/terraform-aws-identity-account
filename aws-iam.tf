@@ -4,7 +4,7 @@
 
 module "iam_roles" {
   source  = "olivr-com/bulk-iam-roles/aws"
-  version = "1.0.1"
+  version = "~> 1.0"
 
   roles = local.aws_iam_roles
   tags  = local.tags
@@ -17,7 +17,7 @@ module "iam_roles" {
 
 module "iam_groups" {
   source  = "olivr-com/bulk-iam-groups/aws"
-  version = "1.0.0"
+  version = "~> 1.0"
 
   groups = var.aws_iam_groups
 }
@@ -29,7 +29,7 @@ module "iam_groups" {
 
 module "iam_users" {
   source  = "olivr-com/bulk-iam-users/aws"
-  version = "1.0.0"
+  version = "~> 1.0"
 
   users_groups       = var.aws_iam_users
   force_destroy      = true
