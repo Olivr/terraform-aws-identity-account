@@ -40,6 +40,16 @@ Click on the button
 - Your programmatic users should be created in IAM or, even better, added to the `_var_aws_iam_users.auto.tfvars.json`
 
 <!-- auto-terraform-backend -->
+## Backend
+
+This script is pre-configured to use the Terraform Cloud backend.
+
+1. Edit the backend settings in `backend.tf`
+
+2. Add a [GitHub secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) called `TF_API_TOKEN` with a [Terraform Cloud team token](https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html#team-api-tokens) as its value
+
+> Don't forget to set the environment variables or any other required variable in your Terraform Cloud workspace
+
 <!-- auto-terraform-backend -->
 
 ## Variables
@@ -53,12 +63,66 @@ You can also set/overwrite the values in these files in your Terraform Cloud wor
 > Read more about [Terraform variables](https://www.terraform.io/docs/configuration/variables.html)
 
 <!-- auto-environment-variables -->
+### Environment variables
+
+#### Using an .env file for your local environment
+
+1. Copy the example env file `cp .env-example .env && chmod +x .env`
+
+2. Edit `.env` with your values
+
+3. Load the environment variables `. ./.env`
+
 <!-- auto-environment-variables -->
 
 <!-- auto-terraform-env -->
+#### AWS
+
+> You can use `AWS_PROFILE` instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+
+- `AWS_DEFAULT_REGION`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+#### Auth0
+
+- `AUTH0_CLIENT_ID`
+- `AUTH0_CLIENT_SECRET`
 <!-- auto-terraform-env -->
 
 <!-- auto-terraform-variables -->
+### Input Variables
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| namespace | Namespace for naming resources (eg. `ac` for Acme) | `string` | n/a | yes |
+| environment | Environment (eg. dev, prod, staging) | `string` | n/a | yes |
+| attributes | List of attributes (eg. internal, public) | `list(string)` | `null` | no |
+| pgp\_key | PGP key in plain text or using the format `keybase:username` to encrypt user keys and passwords | `string` | `null` | no |
+| aws\_assume\_role\_arn | AWS role arn to assume when running this script (if any) | `string` | `null` | no |
+| aws\_iam\_roles | AWS roles to create. If you set the value `cognito` in `assumable_by_federated`, it will be replaced by the newly created Cognito instance, eg. `{ MyRole = { assumable_by_federated = ["cognito"] } }` | `map(map(list(string)))` | `{}` | no |
+| aws\_iam\_groups | AWS groups to create. It should be specified using a map of groups and their attributes, eg. `{ MyGroup = { policies = ["arn:xxx", ...], assume_roles = ["arn:xxx", ...] }, ...}` | `map(map(list(string)))` | `{}` | no |
+| aws\_iam\_users | AWS users to create. You can specify a simple list, eg. `["user-1", ...]` or a map of users and their groups, eg. `{ user-1 = ["MyGroup", ...], ...}`. | `any` | `{}` | no |
+| aws\_cognito\_custom\_domain | Cognito custom domain name. To use this, you must also specify `aws_cognito_custom_domain_certificate_arn`. | `string` | `null` | no |
+| aws\_cognito\_custom\_domain\_certificate\_arn | ARN of an issued ACM certificate for the Cognito custom domain name. | `string` | `null` | no |
+| aws\_cognito\_groups | n/a | `map(map(string))` | `{}` | no |
+| aws\_cognito\_user\_fields | User profile fields to add to your Cognito user pool, eg. email, birthdate, twitter | `map` | `{}` | no |
+| aws\_cognito\_allowed\_callback\_urls | List of URLs that Cognito clients can redirect to. | `list(string)` | `[]` | no |
+| aws\_cognito\_allowed\_logout\_urls | List of URLs that Cognito clients can redirect to after logout (any url added here also need to be added in callback if making use of `redirect_uri`). | `list(string)` | `[]` | no |
+| tfe\_organization | Terraform Cloud organization name | `string` | `null` | no |
+| tfe\_workspace | Terraform Cloud workspace name | `string` | `null` | no |
+| auth0\_domain | Auth0 domain | `string` | n/a | yes |
+| auth0\_cert | Auth0 certificate. Can be found at <https://>`YOUR AUTH0 DOMAIN`/pem | `string` | n/a | yes |
+
+### Outputs
+
+| Name | Description |
+|------|-------------|
+| iam\_roles | n/a |
+| iam\_users\_with\_roles | n/a |
+| cognito\_domain\_alias | CNAME alias to use to finalize configuration of your custom cognito domain (if any) |
+| aws\_signin\_url | n/a |
+
 <!-- auto-terraform-variables -->
 
 ## How to get Auth0 API credentials
@@ -76,13 +140,32 @@ You can also set/overwrite the values in these files in your Terraform Cloud wor
 > Change the name to "Terraform" so you remember what this application is about
 
 <!-- auto-support -->
+
+## Support
+
+Create a new issue on this GitHub repository.
+
 <!-- auto-support -->
 
 <!-- auto-contribute -->
+
+## Contributing
+
+All contributions are welcome! Please see the [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+
 <!-- auto-contribute -->
 
 <!-- auto-license -->
+## License
+
+This project is licensed under the Apache 2.0 License - see the LICENSE file for details
+
 <!-- auto-license -->
 
 <!-- auto-about-org -->
+
+## About olivr
+
+[Olivr](https://olivr.com) is an AI co-founder for your startup.
+
 <!-- auto-about-org -->
