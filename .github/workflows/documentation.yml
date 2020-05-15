@@ -35,6 +35,12 @@ jobs:
           url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SECURITY.md
           path: docs
 
+      - name: docs/SUPPORT.md
+        uses: olivr-com/download-file-action@v1
+        with:
+          url: https://raw.githubusercontent.com/olivr-com/defaults/master/docs/SUPPORT.md
+          path: docs
+
       - name: LICENSE
         uses: olivr-com/download-file-action@v1
         with:
