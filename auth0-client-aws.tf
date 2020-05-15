@@ -4,7 +4,7 @@
 
 resource "auth0_client" "aws" {
   //tfsec:ignore:GEN003
-  token_endpoint_auth_method          = "client_secret_post"
+  token_endpoint_auth_method         = "client_secret_post"
   name                                = "AWS SSO"
   is_token_endpoint_ip_header_trusted = false
   is_first_party                      = true
