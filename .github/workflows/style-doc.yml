@@ -118,6 +118,7 @@ jobs:
         uses: peter-evans/create-pull-request@v2
         with:
           branch: auto-documentation-${{github.ref}}
+          labels: automerge
 
       - name: Merge Pull Request
         uses: actions/github-script@master
