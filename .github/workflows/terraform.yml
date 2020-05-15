@@ -14,6 +14,12 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      - name: Terraform Format
+        run: terraform fmt
+
+      - name: Terraform Lint
+        uses: actionshub/terraform-lint@master
+
       - name: Initialize Terraform
         run: terraform init
 
@@ -37,3 +43,24 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
+
+      # Finalize
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
+        with:
+          branch: auto-terraform-${{github.ref}}
+
+      - name: Merge Pull Request
+        uses: actions/github-script@master
+        if: ${{ steps.cpr.outputs.pull-request-number > 0 }}
+        env:
+          pr_number: ${{ steps.cpr.outputs.pull-request-number }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: process.env['pr_number']
+            })

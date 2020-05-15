@@ -1,10 +1,10 @@
-name: 'Style and documentation'
+name: 'Documentation'
 
 on: push
 
 jobs:
-  main:
-    name: Style and documentation
+  docs:
+    name: Documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -100,7 +100,7 @@ jobs:
           pattern: <!-- auto-terraform-env -->
 
       ################
-      ## Lint files ##
+      ## Finalize ##
       ################
 
       - name: Markdown Lint
@@ -113,22 +113,22 @@ jobs:
       - name: Cleanup Markdown config
         run: rm -rf .markdownlint.yml
 
-      - uses: hashicorp/setup-terraform@v1
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
         with:
-          terraform_wrapper: false
+          branch: auto-documentation-${{github.ref}}
 
-      - name: Terraform Format
-        run: terraform fmt
-
-      - name: Terraform Lint
-        uses: actionshub/terraform-lint@master
-
-      ##########################
-      ## Commit changed files ##
-      ##########################
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4.1.6
+      - name: Merge Pull Request
+        uses: actions/github-script@master
+        if: ${{ steps.cpr.outputs.pull-request-number > 0 }}
+        env:
+          pr_number: ${{ steps.cpr.outputs.pull-request-number }}
         with:
-          commit_message: Update documentation
-          branch: ${{ github.head_ref }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: process.env['pr_number']
+            })
