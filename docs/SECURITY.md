@@ -4,9 +4,9 @@ Although we do our best to keep this project secure. Vulnerabilities can happen.
 
 ## Reporting a Vulnerability
 
-Report security bugs by emailing us at romain-noreply@barissat.com (remove the -noreply part) and all other bugs on our issues page.
+Report security bugs by contacting [Romain Barissat on Keybase](https://keybase.io/romainbarissat) or emailing romain-noreply@barissat.com (remove the -noreply part). Report all other bugs on our GitHub issues page.
 
-If you are not sure, don’t worry. Better safe than sorry – just send an email. Do not open issues related to any security concerns publicly.
+If you are not sure, don’t worry. Better safe than sorry – just get in touch. Do not open issues related to any security concerns publicly.
 
 When reporting an issue, include as much information as possible, but no need to fill fancy forms or answer tedious questions. Just tell us what you found, how to reproduce it, and any concerns you have about it. We will respond as soon as possible and follow up with any missing information.
 
