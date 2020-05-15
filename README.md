@@ -151,7 +151,9 @@ You can also set/overwrite the values in these files in your Terraform Cloud wor
 
 ## Support
 
-Create a new issue on this GitHub repository.
+:closed_lock_with_key: Join us on Keybase chat: [/team/olivr](https://keybase.io/team/olivr)
+
+Or you can use our Reddit community: [/r/olivr](https://www.reddit.com/r/olivr/)
 
 <!-- auto-support -->
 
