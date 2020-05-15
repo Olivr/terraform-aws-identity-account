@@ -3,8 +3,8 @@ name: 'Documentation'
 on: push
 
 jobs:
-  docs:
-    name: Documentation
+  documentation:
+    name: Update documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -12,7 +12,6 @@ jobs:
       ##################################################################
       ## Download generic organization-wide files and Readme sections ##
       ##################################################################
-
       - name: Config - Markdown linting
         uses: olivr-com/download-file-action@v1
         with:
@@ -74,7 +73,6 @@ jobs:
       ########################################
       ## Terraform specific readme sections ##
       ########################################
-
       - name: README.md - Terraform backend
         uses: olivr-com/inject-file-action@v1
         with:
@@ -99,10 +97,9 @@ jobs:
           target: README.md
           pattern: <!-- auto-terraform-env -->
 
-      ################
+      ##############
       ## Finalize ##
-      ################
-
+      ##############
       - name: Markdown Lint
         uses: avto-dev/markdown-lint@v1
         with:
@@ -118,7 +115,9 @@ jobs:
         uses: peter-evans/create-pull-request@v2
         with:
           branch: auto-documentation-${{github.ref}}
-          labels: automerge
+          commit-message: Update documentation
+          title: Changes by Documentation action workflow
+          labels: automerge, documentation
 
       - name: Merge Pull Request
         uses: actions/github-script@master

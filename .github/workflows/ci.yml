@@ -1,4 +1,4 @@
-name: 'Build'
+name: 'Continuous Integration'
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   terraform:
+    name: Terraform build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -35,22 +36,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Plan only on push except to master
       - name: Terraform plan
-        if: github.ref != 'refs/heads/master'
+        if: github.ref != 'refs/heads/master' && github.event_name == 'push'
         run: terraform plan -no-color
 
-      # Apply only on master
+      # Apply only on push to master
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      # Finalize
+      ##############
+      ## Finalize ##
+      ##############
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v2
         with:
           branch: auto-terraform-${{github.ref}}
-          labels: automerge
+          commit-message: Lint Terraform code
+          title: Changes by Terraform action workflow
+          labels: automerge, build
 
       - name: Merge Pull Request
         uses: actions/github-script@master
