@@ -1,5 +1,7 @@
 # Identity account
 
+**We have switched away from AWS, this repo works perfectly but is looking for a new maintainer**
+
 An "identity" AWS account setup using Cognito as an identity provider in AWS IAM.
 
 ## Features
